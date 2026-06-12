@@ -1,12 +1,12 @@
-# Finding taxonomy — what counts as a finding
+# Finding taxonomy: what counts as a finding
 
-Use this as the checklist of defect classes. Anything here, pinned to a `file:line` or `URL + selector` and surviving a refutation attempt, is a row. The classes overlap on purpose — a cross-tenant cache key is both Security and Data integrity; file it once, under the class that names the harm.
+Use this as the checklist of defect classes. Anything here, pinned to a `file:line` or `URL + selector` and surviving a refutation attempt, is a row. The classes overlap on purpose: a cross-tenant cache key is both Security and Data integrity; file it once, under the class that names the harm.
 
 ## Bugs
 Dead links and 404s; crashes and unhandled rejections; silent failures (caught-and-dropped errors); race conditions; timeouts missing or mishandled; off-by-one and boundary errors; state that survives logout; double-submit side effects.
 
 ## Incomplete
-TODO/FIXME in shipping paths; stubbed functions returning fixtures; hardcoded values that should be config; half-wired features (UI exists, handler doesn't — or the reverse); marketing claims with no implementing code; settings that render but change nothing.
+TODO/FIXME in shipping paths; stubbed functions returning fixtures; hardcoded values that should be config; half-wired features (UI exists, handler doesn't, or the reverse); marketing claims with no implementing code; settings that render but change nothing.
 
 ## Security
 IDOR and missing object-level authorization; cross-tenant data leakage; auth checks only on the client; SQL/XSS/command injection; prompt injection through any content an LLM ingests (retrieved documents, user fields, web content); exposed secrets and tokens in code, logs, or client bundles; unverified webhook signatures; missing replay protection; permission checks bypassed by alternate routes (export, search, share, API) to the same data; share-link enforcement after revocation; audit-log gaps on sensitive operations; sessions not invalidated server-side on logout or password change; reset tokens reusable or non-expiring; user enumeration via login/reset/invite responses; access retained after role demotion or member removal; authorization results cached past revocation; cache keys missing tenant/user scope serving one user's data to another.
@@ -54,24 +54,24 @@ Known CVEs in locked versions; deprecated or abandoned packages on critical path
 Prompts with ambiguous or conflicting instructions; prompt and output parser disagreeing on format; unvalidated model output entering code paths; no fallback when the model returns malformed content; LLM calls without token, cost, or timeout caps; deprecated or hardcoded model IDs; near-duplicate prompts drifted out of sync; PII sent to the provider without need; user content concatenated into the instruction segment of a prompt.
 
 ## Promises-vs-reality
-Verify EVERY specific public claim against code: encryption standards named on the security page; retention and deletion guarantees; "we never X" statements; quantified claims (accuracy %, latency, limits); compliance statements; pricing-page feature matrices. Each unverifiable or false claim is a finding — usually HIGH.
+Verify EVERY specific public claim against code: encryption standards named on the security page; retention and deletion guarantees; "we never X" statements; quantified claims (accuracy %, latency, limits); compliance statements; pricing-page feature matrices. Each unverifiable or false claim is a finding, usually HIGH.
 
 ## Severity guide
 
-- **CRITICAL** — data loss or corruption; security breach reachable today; core flow broken for all users; crash on a primary path.
+- **CRITICAL**: data loss or corruption; security breach reachable today; core flow broken for all users; crash on a primary path.
   *e.g. any authenticated user can read any other tenant's documents by changing an id*
-- **HIGH** — claimed feature broken or absent; security weakness needing one precondition; silent failure of something users rely on; data leak with limited scope.
-  *e.g. payment-webhook failures swallowed by an empty catch block — confirmations silently lost*
-- **MEDIUM** — degraded or inconsistent behavior; edge-case failure with a workaround; real but bounded perf problem.
+- **HIGH**: claimed feature broken or absent; security weakness needing one precondition; silent failure of something users rely on; data leak with limited scope.
+  *e.g. payment-webhook failures swallowed by an empty catch block; confirmations silently lost*
+- **MEDIUM**: degraded or inconsistent behavior; edge-case failure with a workaround; real but bounded perf problem.
   *e.g. dashboard chart crashes when a project has zero data points*
-- **LOW** — minor bug, cosmetic defect, polish.
+- **LOW**: minor bug, cosmetic defect, polish.
   *e.g. missing favicon; "recieve" on the pricing page*
-- **IMPROVEMENT** — a concrete, specific upgrade (named change at a named location). Not "consider improving X".
+- **IMPROVEMENT**: a concrete, specific upgrade (named change at a named location). Not "consider improving X".
   *e.g. replace the check-then-decrement on coupon redemption with an atomic decrement*
 
 ## Borderline calls
 
 - A security weakness needing one precondition (an authenticated account, a leaked link) is HIGH, not CRITICAL. Reachable today by anyone is what makes CRITICAL.
 - A claimed feature failing on common input is HIGH; failing only on exotic input is MEDIUM.
-- Anything you would have to hedge to state is not a finding yet — go verify until the hedge disappears, or drop it.
+- Anything you would have to hedge to state is not a finding yet. Go verify until the hedge disappears, or drop it.
 - Torn between two severities? Take the lower one and make the row's evidence undeniable. An inflated list reads as alarmism and gets ignored; an understated row with perfect evidence still gets fixed.
